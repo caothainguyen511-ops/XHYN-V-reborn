@@ -11,6 +11,11 @@ def edit(name,sig,fn):
     assert len(matches)==1,(name,sig,len(matches));m=matches[0];p.write_text(t[:m.start()]+fn(m[0])+t[m.end():])
 def before(name,sig,needle,added):edit(name,sig,lambda t:once(t,needle,added+'\n'+needle))
 assert not (D/'reborn-hooks.json').exists(),'Do not apply these hooks twice'
+locale_source=R/'assets/xhyn-locale-vi.json'
+assert locale_source.is_file(),'Vietnamese locale dictionary is missing'
+locale_target=D/'assets/xhyn-locale-vi.json'
+locale_target.parent.mkdir(parents=True,exist_ok=True)
+locale_target.write_bytes(locale_source.read_bytes())
 P='Lcom/gtavsource/android/'
 before('GameMenuActivity','onCreate(Landroid/os/Bundle;)V','    .line 78',f'    invoke-static {{p0}}, {P}RebornLocale;->init(Landroid/content/Context;)Z\n\n    invoke-static {{p0}}, {P}RebornDiagnostics;->init(Landroid/content/Context;)V\n')
 edit('GameMenuActivity','onResume()V',lambda t:once(t,'    invoke-super {p0}, Landroid/app/Activity;->onResume()V','    invoke-super {p0}, Landroid/app/Activity;->onResume()V\n\n    invoke-static {p0}, '+P+'RebornLocale;->resume(Landroid/app/Activity;)V'))
