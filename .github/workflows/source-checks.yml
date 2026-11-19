@@ -1,0 +1,21 @@
+name: Source checks
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  locale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate Vietnamese locale bundle
+        run: python modifications/scripts/test_vietnamese_locale.py
+      - name: Check patch scripts compile
+        run: python -m py_compile modifications/scripts/apply_hooks.py modifications/scripts/test_vietnamese_locale.py
